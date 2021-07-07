@@ -1,0 +1,1 @@
+qemu-system-x86_64 -L . -m 64 -drive file=./Disk.img,format=raw -M pc
