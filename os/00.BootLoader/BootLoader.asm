@@ -8,7 +8,7 @@ jmp	0x07C0:START	; copy 0x7c0 to cs and jmp to START
 ;;;;;;;;;;;;;;
 ; env values
 ;;;;;;;;;;;;;;
-TOTALSECTORCOUNT:	dw	1024	;
+TOTALSECTORCOUNT:	dw	1025	;
 
 
 ;;;;;;;;;;;;;;;;
@@ -62,9 +62,9 @@ START:
 
 ; before reset
 RESETDISK:
-	; call bios reset function
-	mov ax, 0
-	mov dl, 0
+	; call bios reset function ( like open disk )
+	mov ax, 0   ; function num - reset 0
+	mov dl, 0   ; drive num ( floppy 0x00, hdd 0x80, 0x81...)
 	int 0x13
 	jc HANDLEDISKERROR
 
