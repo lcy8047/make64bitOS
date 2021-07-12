@@ -1,0 +1,1 @@
+E:/makeOS/make64bitOS/qemu-0.10.4/qemu-system-x86_64.exe -L E:/makeOS/make64bitOS/qemu-0.10.4 -m 64 -fda E:/makeOS/make64bitOS/os/Disk.img -localtime -M pc
