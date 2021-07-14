@@ -30,7 +30,7 @@ void main( void )
 		kPrintString(0, 6, "Kernel Area Initialize Fail");
 		while(1);
 	}
-	kPrintString(0, 5, "Pass");
+	kPrintString(45, 5, "Pass");
 
 	while(1);
 }
