@@ -1,2 +1,7 @@
 
 .DS_Store
+*.bin
+*.o
+*.dep
+*.elf
+*.img
