@@ -1,4 +1,5 @@
 #include "types.h"
+#include "page.h"
 
 /* print string */
 void kPrintString( int iX, int iY, const char* pcString );
@@ -11,6 +12,7 @@ void main( void )
 	DWORD i;
 	kPrintString(0, 3, "C Language Kernel Start.....................[Pass]");
 
+	// check minimum memory size
 	kPrintString(0, 4, "Minimum Memory Size Check...................[    ]");
 	if( kIsMemoryEnough() == FALSE)
 	{
@@ -23,7 +25,8 @@ void main( void )
 		kPrintString(45,4,"Pass");
 	}
 
-	kPrintString(0, 5, "IA-32e Kernel Area Initialization...........[    ]");
+	// initialize IA-32e kernel area
+	kPrintString(0, 5, "IA-32e Kernel Area Initialize...............[    ]");
 	if( kInitializeKernel64Area() == FALSE )
 	{
 		kPrintString(45, 5, "Fail");
@@ -31,6 +34,11 @@ void main( void )
 		while(1);
 	}
 	kPrintString(45, 5, "Pass");
+
+	// create page table for IA-32e mode Kernel
+	kPrintString(0, 6, "IA-32e Page Tables Initialize...............[    ]");
+	kInitializePageTables();
+	kPrintString(45, 6, "Pass");
 
 	while(1);
 }
