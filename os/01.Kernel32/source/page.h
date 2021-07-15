@@ -20,10 +20,15 @@
 #define PAGE_MAXENTRYCOUNT  512
 #define PAGE_DEFAULTSIZE    0x200000
 
-// 구조체
 #pragma pack(push, 1)
-
-// 페이지 엔트리에 대한 자료구조
+// page entry structure
+/*
+책에서 발췌
+보호 모드에서 실행되는 코드라도 64비트 정수 타입을 사용할 수 있습니다. 이는 프로세서에서 지원하는 것이
+아니라 컴파일러에서 지원하는 것으로, 64비트 타입을 사용하면 내부적으로 상위 32비트와 하위 32비트로 나
+누어 저장됩니다. MINT64 OS에서 사용하는 컴파일러인 GCC에서도 64비트 정수 타입을 지원하지만, 어드레
+스 계산 과정을 보다 명확하게 보여주려고 32비트 정수 타입 2개로 나누어 사용했습니다.
+*/
 typedef struct kPageTableEntryStruct
 {
     // PML4T와 PDPTE의 경우
@@ -37,7 +42,8 @@ typedef struct kPageTableEntryStruct
     DWORD dwUpperBaseAddressAndEXB;
 } PML4TENTRY, PDPTENTRY, PDENTRY, PTENTRY;
 #pragma pack(pop)
-// 함수
+
+// functions
 void kInitializePageTables(void);
 void kSetPageEntryData(PTENTRY *pstEntry, DWORD dwUpperBaseAddress,
                        DWORD dwLowerBaseAddress, DWORD dwLowerFlags, DWORD dwUpperFlags);
