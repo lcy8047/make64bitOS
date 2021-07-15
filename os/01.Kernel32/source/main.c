@@ -1,5 +1,6 @@
 #include "types.h"
 #include "page.h"
+#include "ModeSwitch.h"
 
 /* print string */
 void kPrintString( int iX, int iY, const char* pcString );
@@ -10,6 +11,8 @@ BOOL kIsMemoryEnough( void );
 void main( void )
 {
 	DWORD i;
+	DWORD dwEAX, dwEBX, dwECX, dwEDX;
+	char vcVendorString[ 13 ] = {0, };
 	kPrintString(0, 3, "C Language Kernel Start.....................[Pass]");
 
 	// check minimum memory size
@@ -40,6 +43,33 @@ void main( void )
 	kInitializePageTables();
 	kPrintString(45, 6, "Pass");
 
+	// read vendor info
+	kReadCPUID( 0x00, &dwEAX, &dwEBX, &dwECX, &dwEDX);
+	*( DWORD* ) vcVendorString = dwEBX;
+	*(( DWORD* ) vcVendorString + 1) = dwECX;
+	*(( DWORD* ) vcVendorString + 2) = dwEDX;
+	kPrintString( 0, 7, "Processor Vendor String....................[              ]" );
+	kPrintString( 45, 7, vcVendorString );
+
+	// check support 64bit
+	kReadCPUID( 0x80000001, &dwEAX, &dwEBX, &dwECX, &dwEDX );
+	kPrintString(0, 8, "64bit Mode Support Check....................[    ]");
+	if( dwEDX & ( 1 << 29 ) )
+	{
+		kPrintString(45, 8, "Pass");
+	}
+	else
+	{
+		kPrintString(45, 8, "Fail");
+		kPrintString(0, 9, "This processor does not support 64bit mode~!!");
+		while (1)
+			;
+	}
+
+	// switch to IA-32e Mode
+	kPrintString(0, 9, "Switch To IA-32e Mode");
+	// 원래는 아래 함수를 호출해야 하나 IA-32e 모드 커널이 없으므로 주석 처리
+	// kSwitchAndExecute64bitKernel();
 	while(1);
 }
 
