@@ -11,7 +11,7 @@
 /* get file, sourceSize return sector count */
 int AdjustInSectorSize(int iFd, int iSourceSize);
 /* write sector count in kernel */
-void WriteKernelInformation(int iTargetFd, int iKernelSectorCount);
+void WriteKernelInformation(int iTargetFd, int iTotalKernelSectorCount, int iKernel32SectorCount);
 /* for copy file src(.bin) to target(.img) return file size */
 int CopyFile(int iSourceFd, int iTargetFd);
 
@@ -21,11 +21,12 @@ int main(int argc, char *argv[])
     int iTargetFd;
     int iBootLoaderSize;
     int iKernel32SectorCount;
+    int iKernel64SectorCount;
     int iSourceSize;
 
     if (argc < 3)
     {
-        fprintf(stderr, "[ERROR] ImageMaker BookerLoader.bin Kernel32.bin\n");
+        fprintf( stderr, "[ERROR] ImageMaker.exe BootLoader.bin Kernel32.bin Kernel64.bin\n" );
         exit(-1);
     }
 
@@ -65,9 +66,26 @@ int main(int argc, char *argv[])
     iKernel32SectorCount = AdjustInSectorSize(iTargetFd, iSourceSize);
     printf( "[INFO] %s size = [%d] and sector count = [%d]\n", argv[2], iSourceSize, iKernel32SectorCount );
 
+    // open kernel64, copy to Disk image
+    printf( "[INFO] Copy protected mode kernel to image file\n" );
+    if( (iSourceFd = open(argv[3], O_RDONLY)) == -1 )
+    {
+        fprintf(stderr, "[ERROR] %s open fail\n", argv[3]);
+        exit(-1);
+    }
+
+    iSourceSize = CopyFile(iSourceFd, iTargetFd);
+    close(iSourceFd);
+
+    // align sector size to Disk image
+    iKernel64SectorCount = AdjustInSectorSize(iTargetFd, iSourceSize);
+    printf( "[INFO] %s size = [%d] and sector count = [%d]\n", argv[3], iSourceSize, iKernel64SectorCount );
+
+
     // update sector count to Disk image
     printf( "[INFO] Start to write kernel information\n" );
-    WriteKernelInformation(iTargetFd, iKernel32SectorCount);
+    WriteKernelInformation(iTargetFd, iKernel32SectorCount + iKernel64SectorCount,
+                            iKernel32SectorCount);
     printf("[INFO] Image file create complete\n");
 
     close(iTargetFd);
@@ -103,7 +121,7 @@ int AdjustInSectorSize(int iFd, int iSourceSize)
     return iSectorCount;
 }
 
-void WriteKernelInformation(int iTargetFd, int iKernelSectorCount)
+void WriteKernelInformation(int iTargetFd, int iTotalKernelSectorCount, int iKernel32SectorCount)
 {
     unsigned short usData;
     long lPosition;
@@ -116,9 +134,13 @@ void WriteKernelInformation(int iTargetFd, int iKernelSectorCount)
     }
 
     // type cast 2bytes unsigned type because sector count is 2bytes
-    usData = (unsigned short)iKernelSectorCount;
+    usData = (unsigned short)iTotalKernelSectorCount;
     write(iTargetFd, &usData, 2);
-    printf("[INFO] Total sector count except boot loader [%d]\n", iKernelSectorCount);
+    usData = (unsigned short)iKernel32SectorCount;
+    write(iTargetFd, &usData, 2);
+
+    printf("[INFO] Total sector count except boot loader [%d]\n", iTotalKernelSectorCount);
+    printf("[INFO] Total sector count of protected mode kernel [%d]\n", iKernel32SectorCount);
 }
 
 int CopyFile(int iSourceFd, int iTargetFd)
