@@ -1,6 +1,6 @@
 # build environment
 NASM32 = nasm
-GCC32 = gcc -c -m32 -ffreestanding
+GCC32 = gcc -g -c -m32 -ffreestanding
 LD32 = ld -melf_i386 -T ../elf_i386.x -nostdlib -e main -Ttext 0x10200
 OBJCOPY32 = objcopy -j .text -j .data -j .rodata -j .bss -S -O binary
 
