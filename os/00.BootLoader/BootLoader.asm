@@ -8,8 +8,9 @@ jmp	0x07C0:START	; copy 0x7c0 to cs and jmp to START
 ;;;;;;;;;;;;;;
 ; env values
 ;;;;;;;;;;;;;;
-TOTALSECTORCOUNT:	dw	1025	;
+TOTALSECTORCOUNT:	    dw 0x02	;
 
+KERNEL32SECTORCOUNT:    dw 0x02
 
 ;;;;;;;;;;;;;;;;
 ; code section
@@ -97,7 +98,7 @@ READDATA:
     mov al, byte[ SECTORNUMBER ]
     add al, 0x1
     mov byte[ SECTORNUMBER ], al
-    cmp al, 19
+    cmp al, 37      ; track per sector latest qemu : 36+1, 0.10.4 qemu : 18+1
     jl READDATA
 
     xor byte[ HEADNUMBER ], 0x01
