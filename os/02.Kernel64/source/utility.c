@@ -1,6 +1,6 @@
 #include "utility.h"
 
-void kMemset( void* pvDestination, BYTE bData, int iSize )
+void kMemSet( void* pvDestination, BYTE bData, int iSize )
 {
     int i;
 
