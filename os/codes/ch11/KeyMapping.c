@@ -17,7 +17,7 @@ typedef struct kKeyboardManagerStruct
     int iSkipCountForPause;
 } KETBOARDMANAGER;
 
-static KETMAPPINGENTRY gs_vstKeyMappingTable[ KEY_MAPPINGTABLEMAXCOUNT ] =
+static KEYMAPPINGENTRY gs_vstKeyMappingTable[ KEY_MAPPINGTABLEMAXCOUNT ] =
 {
     /*  0   */  {   KEY_NONE        ,   KEY_NONE        },
     /*  1   */  {   KEY_ESC         ,   KEY_ESC         },
@@ -108,4 +108,4 @@ static KETMAPPINGENTRY gs_vstKeyMappingTable[ KEY_MAPPINGTABLEMAXCOUNT ] =
     /*  86  */  {   KEY_NONE        ,   KEY_NONE        },
     /*  87  */  {   KEY_F11         ,   KEY_F11         },
     /*  88  */  {   KEY_F12         ,   KEY_F12         }
-}
+};

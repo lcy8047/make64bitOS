@@ -192,7 +192,7 @@ void kEnableA20Gate( void )
     // 
     for(i=0; i<0xFFFF; i++)
     {
-        if(kIsIputBufferFull() == FALSE)
+        if(kIsInputBufferFull() == FALSE)
         {
             break;
         }
@@ -215,8 +215,8 @@ void kReboot( void )
         }
     }
 
-    kOutPutByte( 0x64, 0xD1 );
-    kOutPutByte( 0x64, 0x00 );
+    kOutPortByte( 0x64, 0xD1 );
+    kOutPortByte( 0x64, 0x00 );
 
     while( 1 )
     {
@@ -228,7 +228,7 @@ void kReboot( void )
 
 static KETBOARDMANAGER gs_stKeyboardManager = { 0, };
 
-static KETMAPPINGENTRY gs_vstKeyMappingTable[ KEY_MAPPINGTABLEMAXCOUNT ] =
+static KEYMAPPINGENTRY gs_vstKeyMappingTable[ KEY_MAPPINGTABLEMAXCOUNT ] =
 {
     /*  0   */  {   KEY_NONE        ,   KEY_NONE        },
     /*  1   */  {   KEY_ESC         ,   KEY_ESC         },
@@ -319,7 +319,7 @@ static KETMAPPINGENTRY gs_vstKeyMappingTable[ KEY_MAPPINGTABLEMAXCOUNT ] =
     /*  86  */  {   KEY_NONE        ,   KEY_NONE        },
     /*  87  */  {   KEY_F11         ,   KEY_F11         },
     /*  88  */  {   KEY_F12         ,   KEY_F12         }
-}
+};
 
 BOOL kIsAlphabetScanCode( BYTE bScanCode )
 {
