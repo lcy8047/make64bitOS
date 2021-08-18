@@ -1,6 +1,7 @@
 #include "types.h"
 #include "keyboard.h"
 #include "descriptor.h"
+#include "pic.h"
 
 // functions
 void kPrintString( int iX, int iY, const char* pcString);
@@ -9,9 +10,9 @@ void main(void)
 {
     /* for simple shell */
     char vcTemp[ 2 ] = { 0, };
-    BYTE bFlags;
     BYTE bTemp;
     int i = 0;
+    KEYDATA stData;
 
     kPrintString( 0, 10, "Switch To IA-32e Mode Success" );
     kPrintString( 0, 11, "IA-32e C Language Kernel Start..............[Pass]" );
@@ -30,9 +31,9 @@ void main(void)
     kLoadIDTR( IDTR_STARTADDRESS );
     kPrintString( 45, 14, "Pass" );
 
-    kPrintString( 0, 15, "Keyboard Activate...........................[    ]" );
+    kPrintString( 0, 15, "Keyboard Activate And Queue Initialize......[    ]" );
 
-    if( kActivateKeyboard() == TRUE )
+    if( kInitializeKeyboard() == TRUE )
     {
         kPrintString( 45, 15, "Pass" );
         kChangeKeyboardLED( FALSE, FALSE, FALSE );
@@ -43,23 +44,27 @@ void main(void)
         while(1);
     }
 
+    kPrintString( 0, 16, "PIC Controller And Interrupt Initialize.....[    ]" );
+    kInitializePIC();
+    kMaskPICInterrupt( 0 );
+    kEnableInterrupt();
+    kPrintString( 45, 16, "Pass" );
+
     while(1)
     {
-        if( kIsOutputBufferFull() == TRUE )
+        if( kGetKeyFromKeyQueue( &stData ) == TRUE )
         {
             bTemp = kGetKeyboardScanCode();
 
-            if( kConvertScanCodeToASCIICode ( bTemp, &( vcTemp[0] ), &bFlags ) == TRUE )
+            if( stData.bFlags & KEY_FLAGS_DOWN )
             {
-                if( bFlags & KEY_FLAGS_DOWN )
-                {
-                    kPrintString( i++, 16, vcTemp );
+                vcTemp[ 0 ] = stData.bASCIICode;
+                kPrintString( i++, 17, vcTemp );
 
-                    // 0을 입력하면 0으로 나누는 연산을 수행해 divide error 예외 발생
-                    if( vcTemp[0] == '0')
-                    {
-                        bTemp = bTemp / 0;
-                    }
+                // 0을 입력하면 0으로 나누는 연산을 수행해 divide error 예외 발생
+                if( vcTemp[0] == '0')
+                {
+                    bTemp = bTemp / 0;
                 }
             }
         }
