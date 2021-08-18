@@ -1,8 +1,8 @@
 [BITS 64]
 
-SECTION .text
+global kInPortByte, kOutPortByte, kLoadGDTR, kLoadTR, kLoadIDTR
 
-global kInPortByte, kOutPortByte
+SECTION .text
 
 ; read 1byte from port
 ; PARAM: portnumber
@@ -29,4 +29,16 @@ kOutPortByte:
 
     pop rax         ; restore rax
     pop rdx         ; restore rdx
+    ret
+
+kLoadGDTR:
+    lgdt [ rdi ]
+    ret
+
+kLoadTR:
+    ltr di
+    ret
+
+kLoadIDTR:
+    lidt [ rdi ]
     ret
